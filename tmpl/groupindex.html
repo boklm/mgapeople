@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>[% config.sitename %]: g</title>
+    </head>
+    <body>
+        <h1>groups</h1>
+        <ul>
+            [% FOREACH group IN groups %]
+            <li><a href="[% group.value.cn.0 %].html">[% group.value.cn.0 %]</a> : [% group.value.description.0 %]</li>
+            [% END %]
+        </ul>
+    </body>
+</html>

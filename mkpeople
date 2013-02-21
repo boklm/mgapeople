@@ -1,0 +1,112 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Template;
+use Net::LDAP;
+use File::Slurp;
+use YAML qw/LoadFile/;
+
+my $config_file = '/etc/mgapeople.conf';
+my $config = LoadFile($ENV{MGAPEOPLE_CONF} ?  $ENV{MGAPEOPLE_CONF} : $config_file);
+
+my %groups;
+my %users;
+
+sub loaduser {
+    my ($ldap, $user) = @_;
+    my $m = $ldap->search(
+        base   => $user,
+        scope  => 'base',
+        filter => '(objectClass=inetOrgPerson)',
+    );
+    die $m->error if $m->is_error;
+    my $res = $m->as_struct;
+    if (exists $res->{$user}) {
+        $res->{$user}->{groups} = [];
+        $users{$user} = $res->{$user};
+    }
+}
+
+sub loadgroups {
+    my ($ldap) = @_;
+    my $m = $ldap->search(
+        base   => $config->{groupbase},
+        filter => '(objectClass=groupOfNames)',
+    );
+    die $m->error if $m->is_error;
+    my $res = $m->as_struct;
+    for my $groupname (keys %$res) {
+        $groups{$groupname} = $res->{$groupname};
+        for my $user (@{$groups{$groupname}->{member}}) {
+            loaduser($ldap, $user) unless exists $users{$user};
+            if (exists $users{$user}) {
+                push $users{$user}->{groups}, $groupname;
+            }
+        }
+        $res->{$groupname}->{member} =
+            [ grep { exists $users{$_} } @{$groups{$groupname}->{member}} ];
+    }
+}
+
+sub output_users {
+    my ($extension) = @_;
+    my $template = Template->new({
+        INCLUDE_PATH => $config->{tmpl_dir},
+        OUTPUT_PATH => "$config->{output_dir}/u",
+    });
+    for my $user (keys %users) {
+        my $vars = {
+            config => $config,
+            user   => $user,
+            users  => \%users,
+            groups => \%groups,
+        };
+        my $uid = $users{$user}->{uid}->[0];
+        print "user: $user - uid: $uid\n";
+        $template->process("user.$extension", $vars, "$uid.html");
+    }
+
+    my $vars = {
+        config => $config,
+        users  => \%users,
+        groups => \%groups,
+    };
+    $template->process("userindex.$extension", $vars, "index.html");
+}
+
+sub output_groups {
+    my ($extension) = @_;
+    my $template = Template->new({
+        INCLUDE_PATH => $config->{tmpl_dir},
+        OUTPUT_PATH => "$config->{output_dir}/g",
+    });
+    for my $group (keys %groups) {
+        my $vars = {
+            config => $config,
+            group  => $group,
+            users  => \%users,
+            groups => \%groups,
+        };
+        my $cn = $groups{$group}->{cn}->[0];
+        $template->process("group.$extension", $vars, "$cn.html");
+    }
+
+    my $vars = {
+        config => $config,
+        users  => \%users,
+        groups => \%groups,
+    };
+    $template->process("groupindex.$extension", $vars, "index.html");
+}
+
+my $bindpw = read_file($config->{bindpwfile});
+chomp $bindpw;
+my $ldap = Net::LDAP->new($config->{ldapserver}) or die "$@";
+my $m;
+$m = $ldap->start_tls(verify => 'none');
+die $m->error if $m->is_error;
+$m = $ldap->bind($config->{binddn}, password => $bindpw);
+die $m->error if $m->is_error;
+loadgroups($ldap);
+output_users('html');
+output_groups('html');

@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>[% config.sitename %]: u/[% users.$user.uid.0 %]</title>
+    </head>
+    <body>
+        <h1>[% users.$user.uid.0 %]</h1>
+        <ul>
+            <li>
+            <b>Name</b>: [% users.$user.cn.0 %]
+            </li>
+            <li>
+            <b>Login</b>: [% users.$user.uid.0 %]
+            </li>
+            <li>
+            <b>UID</b>: [% users.$user.uidnumber.0 %]
+            </li>
+            <li>
+            <b>Groups</b>:
+            [% FOREACH group IN users.$user.groups %]
+              <a href="../g/[% groups.$group.cn.0 %].html">[% groups.$group.cn.0 %]</a>
+            [% END %]
+            </li>
+        </ul>
+    </body>
+</html>

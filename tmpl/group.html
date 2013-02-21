@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>[% config.sitename %]: g/[% groups.$group.cn.0 %]</title>
+    </head>
+    <body>
+        <h1>[% groups.$group.cn.0 %]</h1>
+
+        <h3>[% groups.$group.description.0 %]</h3>
+
+        Members:
+        <ul>
+            [% FOREACH user IN groups.$group.member %]
+              <li><a href="../u/[% users.$user.uid.0 %].html">[% users.$user.cn.0 %] ([% users.$user.uid.0 %])</a></li>
+            [% END %]
+        </ul>
+    </body>
+</html>
