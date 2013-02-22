@@ -62,7 +62,6 @@ sub output_users {
             groups => \%groups,
         };
         my $uid = $users{$user}->{uid}->[0];
-        print "user: $user - uid: $uid\n";
         $template->process("user.$extension", $vars, "$uid.html");
     }
 
