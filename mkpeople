@@ -40,7 +40,7 @@ sub loadgroups {
         for my $user (@{$groups{$groupname}->{member}}) {
             loaduser($ldap, $user) unless exists $users{$user};
             if (exists $users{$user}) {
-                push $users{$user}->{groups}, $groupname;
+                push @{$users{$user}->{groups}}, $groupname;
             }
         }
         $res->{$groupname}->{member} =
