@@ -62,7 +62,7 @@ sub output_users {
             groups => \%groups,
         };
         my $uid = $users{$user}->{uid}->[0];
-        $template->process("user.$extension", $vars, "$uid.html");
+        $template->process("user.$extension", $vars, "$uid.$extension");
     }
 
     my $vars = {
@@ -70,7 +70,7 @@ sub output_users {
         users  => \%users,
         groups => \%groups,
     };
-    $template->process("userindex.$extension", $vars, "index.html");
+    $template->process("userindex.$extension", $vars, "index.$extension");
 }
 
 sub output_groups {
@@ -87,7 +87,7 @@ sub output_groups {
             groups => \%groups,
         };
         my $cn = $groups{$group}->{cn}->[0];
-        $template->process("group.$extension", $vars, "$cn.html");
+        $template->process("group.$extension", $vars, "$cn.$extension");
     }
 
     my $vars = {
@@ -95,7 +95,7 @@ sub output_groups {
         users  => \%users,
         groups => \%groups,
     };
-    $template->process("groupindex.$extension", $vars, "index.html");
+    $template->process("groupindex.$extension", $vars, "index.$extension");
 }
 
 my $bindpw = read_file($config->{bindpwfile});
