@@ -1,10 +1,11 @@
+[% SET login = users.$user.uid.0 %]
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>[% config.sitename %]: u/[% users.$user.uid.0 %]</title>
+        <title>[% config.sitename %]: u/[% login %]</title>
     </head>
     <body>
-        <h1>[% users.$user.uid.0 %]</h1>
+        <h1>[% login %]</h1>
         <ul>
             <li>
             <b>Name</b>: [% users.$user.cn.0 %]
