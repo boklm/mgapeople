@@ -20,5 +20,15 @@
             [% END %]
             </li>
         </ul>
+        [% IF maintdb.$login %]
+        <h3>[% users.$user.cn.0 %] is maintaining [% maintdb.$login.size %] packages</h3>
+        <ul>
+            [% FOREACH pkg IN maintdb.$login %]
+            <li>
+                [% pkg %]
+            </li>
+            [% END %]
+        </ul>
+        [% END %]
     </body>
 </html>

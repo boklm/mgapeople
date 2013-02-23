@@ -5,12 +5,25 @@ use Template;
 use Net::LDAP;
 use File::Slurp;
 use YAML qw/LoadFile/;
+use LWP::UserAgent;
 
 my $config_file = '/etc/mgapeople.conf';
 my $config = LoadFile($ENV{MGAPEOPLE_CONF} ?  $ENV{MGAPEOPLE_CONF} : $config_file);
 
+my %maintdb;
 my %groups;
 my %users;
+
+sub loadmaintdb {
+    return unless $config->{maintdburl};
+    my $ua = LWP::UserAgent->new;
+    my $r = $ua->get($config->{maintdburl});
+    return unless $r->is_success;
+    for my $line (split /^/, $r->decoded_content) {
+        my ($pkg, $user) = split ' ', $line;
+        push @{$maintdb{$user}}, $pkg;
+    }
+}
 
 sub loaduser {
     my ($ldap, $user) = @_;
@@ -56,19 +69,21 @@ sub output_users {
     });
     for my $user (keys %users) {
         my $vars = {
-            config => $config,
-            user   => $user,
-            users  => \%users,
-            groups => \%groups,
+            config  => $config,
+            user    => $user,
+            users   => \%users,
+            groups  => \%groups,
+            maintdb => \%maintdb,
         };
         my $uid = $users{$user}->{uid}->[0];
         $template->process("user.$extension", $vars, "$uid.$extension");
     }
 
     my $vars = {
-        config => $config,
-        users  => \%users,
-        groups => \%groups,
+        config  => $config,
+        users   => \%users,
+        groups  => \%groups,
+        maintdb => \%maintdb,
     };
     $template->process("userindex.$extension", $vars, "index.$extension");
 }
@@ -81,19 +96,21 @@ sub output_groups {
     });
     for my $group (keys %groups) {
         my $vars = {
-            config => $config,
-            group  => $group,
-            users  => \%users,
-            groups => \%groups,
+            config  => $config,
+            group   => $group,
+            users   => \%users,
+            groups  => \%groups,
+            maintdb => \%maintdb,
         };
         my $cn = $groups{$group}->{cn}->[0];
         $template->process("group.$extension", $vars, "$cn.$extension");
     }
 
     my $vars = {
-        config => $config,
-        users  => \%users,
-        groups => \%groups,
+        config  => $config,
+        users   => \%users,
+        groups  => \%groups,
+        maintdb => \%maintdb,
     };
     $template->process("groupindex.$extension", $vars, "index.$extension");
 }
@@ -105,9 +122,10 @@ sub output_index {
         OUTPUT_PATH => "$config->{output_dir}",
     });
     my $vars = {
-        config => $config,
-        users  => \%users,
-        groups => \%groups,
+        config  => $config,
+        users   => \%users,
+        groups  => \%groups,
+        maintdb => \%maintdb,
     };
     $template->process("index.$extension", $vars, "index.$extension");
 }
@@ -120,6 +138,7 @@ $m = $ldap->start_tls(verify => 'none');
 die $m->error if $m->is_error;
 $m = $ldap->bind($config->{binddn}, password => $bindpw);
 die $m->error if $m->is_error;
+loadmaintdb;
 loadgroups($ldap);
 output_users('html');
 output_groups('html');
