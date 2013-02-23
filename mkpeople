@@ -98,6 +98,20 @@ sub output_groups {
     $template->process("groupindex.$extension", $vars, "index.$extension");
 }
 
+sub output_index {
+    my ($extension) = @_;
+    my $template = Template->new({
+        INCLUDE_PATH => $config->{tmpl_dir},
+        OUTPUT_PATH => "$config->{output_dir}",
+    });
+    my $vars = {
+        config => $config,
+        users  => \%users,
+        groups => \%groups,
+    };
+    $template->process("index.$extension", $vars, "index.$extension");
+}
+
 my $bindpw = read_file($config->{bindpwfile});
 chomp $bindpw;
 my $ldap = Net::LDAP->new($config->{ldapserver}) or die "$@";
@@ -109,3 +123,4 @@ die $m->error if $m->is_error;
 loadgroups($ldap);
 output_users('html');
 output_groups('html');
+output_index('html');
