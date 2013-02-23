@@ -13,9 +13,6 @@
             <b>Login</b>: [% users.$user.uid.0 %]
             </li>
             <li>
-            <b>UID</b>: [% users.$user.uidnumber.0 %]
-            </li>
-            <li>
             <b>Groups</b>:
             [% FOREACH group IN users.$user.groups %]
               <a href="../g/[% groups.$group.cn.0 %].html">[% groups.$group.cn.0 %]</a>
