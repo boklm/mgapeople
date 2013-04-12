@@ -2,7 +2,7 @@ VERSION=0.3
 
 BINFILES=mkpeople
 CFGFILES=mgapeople.conf
-TMPLFILES=tmpl/*.html
+TMPLFILES=tmpl/*.html tmpl/*.txt
 
 sysconfdir=/etc
 bindir=/usr/bin
