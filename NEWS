@@ -1,3 +1,5 @@
+Version 0.4
+
 - fix Makefile to also install txt template files
 - Add link to source code repository on index page
 
