@@ -14,6 +14,14 @@ my %maintdb;
 my %groups;
 my %users;
 
+sub process_template {
+    my ($template, $src, $vars, $dest) = @_;
+    for my $extension (@{$config->{output_format}}) {
+        next unless -f "$config->{tmpl_dir}/$src.$extension";
+        $template->process("$src.$extension", $vars, "$dest.$extension");
+    }
+}
+
 sub loadmaintdb {
     return unless $config->{maintdburl};
     my $ua = LWP::UserAgent->new;
@@ -62,7 +70,6 @@ sub loadgroups {
 }
 
 sub output_users {
-    my ($extension) = @_;
     my $template = Template->new({
         INCLUDE_PATH => $config->{tmpl_dir},
         OUTPUT_PATH => "$config->{output_dir}/u",
@@ -76,7 +83,7 @@ sub output_users {
             maintdb => \%maintdb,
         };
         my $uid = $users{$user}->{uid}->[0];
-        $template->process("user.$extension", $vars, "$uid.$extension");
+        process_template($template, 'user', $vars, $uid);
     }
 
     my $vars = {
@@ -85,11 +92,10 @@ sub output_users {
         groups  => \%groups,
         maintdb => \%maintdb,
     };
-    $template->process("userindex.$extension", $vars, "index.$extension");
+    process_template($template, 'userindex', $vars, 'index');
 }
 
 sub output_groups {
-    my ($extension) = @_;
     my $template = Template->new({
         INCLUDE_PATH => $config->{tmpl_dir},
         OUTPUT_PATH => "$config->{output_dir}/g",
@@ -103,7 +109,7 @@ sub output_groups {
             maintdb => \%maintdb,
         };
         my $cn = $groups{$group}->{cn}->[0];
-        $template->process("group.$extension", $vars, "$cn.$extension");
+        process_template($template, 'group', $vars, $cn);
     }
 
     my $vars = {
@@ -112,11 +118,10 @@ sub output_groups {
         groups  => \%groups,
         maintdb => \%maintdb,
     };
-    $template->process("groupindex.$extension", $vars, "index.$extension");
+    process_template($template, 'groupindex', $vars, 'index');
 }
 
 sub output_index {
-    my ($extension) = @_;
     my $template = Template->new({
         INCLUDE_PATH => $config->{tmpl_dir},
         OUTPUT_PATH => "$config->{output_dir}",
@@ -127,7 +132,7 @@ sub output_index {
         groups  => \%groups,
         maintdb => \%maintdb,
     };
-    $template->process("index.$extension", $vars, "index.$extension");
+    process_template($template, 'index', $vars, 'index');
 }
 
 my $bindpw = read_file($config->{bindpwfile});
@@ -140,6 +145,6 @@ $m = $ldap->bind($config->{binddn}, password => $bindpw);
 die $m->error if $m->is_error;
 loadmaintdb;
 loadgroups($ldap);
-output_users('html');
-output_groups('html');
-output_index('html');
+output_users();
+output_groups();
+output_index();
