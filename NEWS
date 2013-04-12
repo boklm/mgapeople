@@ -1,3 +1,6 @@
+
+- tmpl/userindex.txt: remove empty line at end of file
+
 Version 0.4
 
 - fix Makefile to also install txt template files
