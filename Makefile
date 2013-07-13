@@ -11,6 +11,8 @@ sharedir=/usr/share
 tmpldir=$(sharedir)/mgapeople/tmpl
 staticdir=$(sharedir)/mgapeople/static
 
+.PHONY : install tar
+
 install:
 	install -d $(DESTDIR)$(tmpldir) $(DESTDIR)$(bindir) \
 	    	   $(DESTDIR)$(sysconfdir) $(DESTDIR)$(staticdir)
