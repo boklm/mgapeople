@@ -2,13 +2,17 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>[% config.sitename %]: u</title>
+        [%- INCLUDE head.html -%]
     </head>
     <body>
-        <h1>Users</h1>
-        <ul>
-            [% FOREACH user IN users %]
-            <li><a href="[% user.value.uid.0 %].html">[% user.value.cn.0 %] ([% user.value.uid.0 %])</a></li>
-            [% END %]
-        </ul>
+        [%- INCLUDE body_top.html -%]
+        <h1 id='mgnavt'><a href="../index.html">[% config.sitename %]</a> » users</h1>
+        <div class='content'>
+            <ul>
+                [% FOREACH user IN users %]
+                <li><a href="[% user.value.uid.0 %].html">[% user.value.cn.0 %] ([% user.value.uid.0 %])</a></li>
+                [% END %]
+            </ul>
+        </div>
     </body>
 </html>

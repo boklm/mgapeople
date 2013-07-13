@@ -2,14 +2,18 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>[% config.sitename %]</title>
+        [%- INCLUDE head.html -%]
     </head>
     <body>
-        <h1>[% config.sitename %]</h1>
+        [%- INCLUDE body_top.html -%]
+        <h1 id='mgnavt'>[% config.sitename %]</h1>
 
-        <h2><a href="g/">Groups</a></h2>
+        <div class='content'>
+            <h2><a href="g/">Groups</a></h2>
 
-        <h2><a href="u/">Users</a></h2>
+            <h2><a href="u/">Users</a></h2>
 
-        Source code for this website is available on <a href="http://svnweb.mageia.org/soft/mgapeople/">svn://svn.mageia.org/svn/soft/mgapeople/</a>.
+            Source code for this website is available on <a href="http://svnweb.mageia.org/soft/mgapeople/">svn://svn.mageia.org/svn/soft/mgapeople/</a>.
+        </div>
     </body>
 </html>

@@ -2,13 +2,17 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>[% config.sitename %]: g</title>
+        [%- INCLUDE head.html -%]
     </head>
     <body>
-        <h1>groups</h1>
-        <ul>
-            [% FOREACH group IN groups %]
-            <li><a href="[% group.value.cn.0 %].html">[% group.value.cn.0 %]</a> : [% group.value.description.0 %]</li>
-            [% END %]
-        </ul>
+        [%- INCLUDE body_top.html -%]
+        <h1 id='mgnavt'><a href="../index.html">[% config.sitename %]</a> » groups</h1>
+        <div class='content'>
+            <ul>
+                [% FOREACH group IN groups %]
+                <li><a href="[% group.value.cn.0 %].html">[% group.value.cn.0 %]</a> : [% group.value.description.0 %]</li>
+                [% END %]
+            </ul>
+        </div>
     </body>
 </html>

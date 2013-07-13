@@ -2,17 +2,21 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>[% config.sitename %]: g/[% groups.$group.cn.0 %]</title>
+        [%- INCLUDE head.html -%]
     </head>
     <body>
-        <h1>[% groups.$group.cn.0 %]</h1>
+        [%- INCLUDE body_top.html -%]
+        <h1 id='mgnavt'><a href="../index.html">[% config.sitename %]</a> » <a href="index.html">groups</a> » [% groups.$group.cn.0 %]</h1>
 
-        <h3>[% groups.$group.description.0 %]</h3>
+        <div class='content'>
+            <h3>[% groups.$group.description.0 %]</h3>
 
-        Members:
-        <ul>
-            [% FOREACH user IN groups.$group.member %]
-              <li><a href="../u/[% users.$user.uid.0 %].html">[% users.$user.cn.0 %] ([% users.$user.uid.0 %])</a></li>
-            [% END %]
-        </ul>
+            Members:
+            <ul>
+                [% FOREACH user IN groups.$group.member %]
+                  <li><a href="../u/[% users.$user.uid.0 %].html">[% users.$user.cn.0 %] ([% users.$user.uid.0 %])</a></li>
+                [% END %]
+            </ul>
+        </div>
     </body>
 </html>

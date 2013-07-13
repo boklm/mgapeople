@@ -3,32 +3,36 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>[% config.sitename %]: u/[% login %]</title>
+        [%- INCLUDE head.html -%]
     </head>
     <body>
-        <h1>[% login %]</h1>
-        <ul>
-            <li>
-            <b>Name</b>: [% users.$user.cn.0 %]
-            </li>
-            <li>
-            <b>Login</b>: [% users.$user.uid.0 %]
-            </li>
-            <li>
-            <b>Groups</b>:
-            [% FOREACH group IN users.$user.groups %]
-              <a href="../g/[% groups.$group.cn.0 %].html">[% groups.$group.cn.0 %]</a>
+        [%- INCLUDE body_top.html -%]
+        <h1 id='mgnavt'><a href="../index.html">[% config.sitename %]</a> » <a href="index.html">users</a> » [% login %]</h1>
+        <div class='content'>
+            <ul>
+                <li>
+                <b>Name</b>: [% users.$user.cn.0 %]
+                </li>
+                <li>
+                <b>Login</b>: [% users.$user.uid.0 %]
+                </li>
+                <li>
+                <b>Groups</b>:
+                [% FOREACH group IN users.$user.groups %]
+                  <a href="../g/[% groups.$group.cn.0 %].html">[% groups.$group.cn.0 %]</a>
+                [% END %]
+                </li>
+            </ul>
+            [% IF maintdb.$login %]
+            <h3>[% users.$user.cn.0 %] is maintaining [% maintdb.$login.size %] packages</h3>
+            <ul>
+                [% FOREACH pkg IN maintdb.$login %]
+                <li>
+                   [% pkg %]
+                </li>
+                [% END %]
+            </ul>
             [% END %]
-            </li>
-        </ul>
-        [% IF maintdb.$login %]
-        <h3>[% users.$user.cn.0 %] is maintaining [% maintdb.$login.size %] packages</h3>
-        <ul>
-            [% FOREACH pkg IN maintdb.$login %]
-            <li>
-                [% pkg %]
-            </li>
-            [% END %]
-        </ul>
-        [% END %]
+        </div>
     </body>
 </html>
